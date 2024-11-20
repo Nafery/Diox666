@@ -4,13 +4,12 @@
 
 {% block content %}
 <div class="container mt-5">
-
     <!-- Título de la página -->
     <h1 class="text-center mb-4 text-primary">Detalle del Residente</h1>
 
     <!-- Fila para imagen y datos personales -->
     <div class="row">
-        <!-- Imagen de perfil a la izquierda -->
+        <!-- Imagen de perfil -->
         {% if residente.imagen %}
             <div class="col-md-3 text-center">
                 <img src="{{ residente.imagen.url }}" alt="Imagen de perfil" class="img-fluid rounded-circle" style="max-width: 200px; height: auto;">
@@ -21,18 +20,33 @@
             </div>
         {% endif %}
 
-        <!-- Datos personales a la derecha de la imagen -->
+        <!-- Datos personales -->
         <div class="col-md-9">
-            <h3>{{ residente.nombre }} {{ residente.ap_paterno }}</h3>
+            <h3>{{ residente.nombre }} {{ residente.ap_paterno }} {{ residente.ap_materno }}</h3>
+            <p><strong>RUT:</strong> {{ residente.rut }}</p>
             <p><strong>Fecha de Nacimiento:</strong> {{ residente.fecha_nacimiento }}</p>
-            <p><strong>Dirección:</strong> {{ residente.direccion }}</p>
-            <p><strong>Teléfono:</strong> {{ residente.telefono }}</p>
+            <p><strong>Género:</strong> {{ residente.genero }}</p>
+            <p><strong>Habitación:</strong> {{ residente.habitacion }}</p>
+            <p><strong>Contacto de Emergencia:</strong> {{ residente.contacto_emergencia }}</p>
+            <p><strong>Teléfono de Emergencia:</strong> {{ residente.telefono_emergencia }}</p>
         </div>
     </div>
 
     <hr>
 
-    <!-- Pestañas para cambiar entre Enfermedades, Medicamentos y Horarios -->
+    <!-- Observaciones -->
+    <div class="mt-4">
+        <h4 class="text-secondary">Observaciones</h4>
+        {% if residente.observaciones %}
+            <p>{{ residente.observaciones }}</p>
+        {% else %}
+            <p><em>No hay observaciones registradas.</em></p>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <!-- Pestañas para información adicional -->
     <ul class="nav nav-pills" id="tabs" role="tablist">
         <li class="nav-item" role="presentation">
             <a class="nav-link active" id="enfermedades-tab" data-bs-toggle="pill" href="#enfermedades" role="tab" aria-controls="enfermedades" aria-selected="true">Enfermedades</a>
@@ -49,10 +63,20 @@
         <!-- Sección Enfermedades -->
         <div class="tab-pane fade show active" id="enfermedades" role="tabpanel" aria-labelledby="enfermedades-tab">
             <h4 class="text-danger">Enfermedades</h4>
-            {% if residente.enfermedades.all %}
+            {% if enfermedades %}
                 <ul class="list-group">
-                    {% for enfermedad in residente.enfermedades.all %}
-                        <li class="list-group-item">{{ enfermedad.nombre }}</li>
+                    {% for relacion in enfermedades %}
+                        <li class="list-group-item">
+                            <strong>{{ relacion.enfermedad.nombre }}</strong><br>
+                            <small>
+                                <strong>Fecha de Diagnóstico:</strong> {{ relacion.fecha_diagnostico }}<br>
+                                {% if relacion.tratamiento %}
+                                    <strong>Tratamiento:</strong> {{ relacion.tratamiento }}
+                                {% else %}
+                                    <em>Sin tratamiento registrado</em>
+                                {% endif %}
+                            </small>
+                        </li>
                     {% endfor %}
                 </ul>
             {% else %}
@@ -103,8 +127,10 @@
         </div>
     </div>
 
+    <!-- Botón de regreso -->
     <div class="mt-4 text-center">
         <a href="{% url 'residentes' %}" class="btn btn-outline-primary">Volver a la lista</a>
     </div>
 </div>
 {% endblock %}
+

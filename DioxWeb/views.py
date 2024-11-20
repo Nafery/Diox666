@@ -20,7 +20,11 @@ def lista_empleados(request):
 
 def detalle_residente(request, id):
     residente = get_object_or_404(Residente, id=id)
-    return render(request, 'pages/detalle_residente.html', {'residente': residente})
+    enfermedades = ResidenteEnfermedad.objects.filter(residente=residente)
+    return render(request, 'pages/detalle_residente.html', {
+        'residente': residente,
+        'enfermedades': enfermedades,
+    })
 
 def detalle_empleado(request, id):
     empleado = get_object_or_404(Empleado, id=id)
@@ -30,51 +34,34 @@ def crear_residente(request):
     # Formulario principal para Residente
     residente_form = ResidenteForm(request.POST or None, request.FILES or None)
 
-    # Inicializamos los formsets en caso de que se necesiten
-    enfermedad_formset = None
-    medicamento_formset = None
+    # Crear formsets
+    ResidenteEnfermedadFormSet = inlineformset_factory(
+        Residente, ResidenteEnfermedad, form=ResidenteEnfermedadForm, extra=1, can_delete=True
+    )
+    ResidenteMedicamentoFormSet = inlineformset_factory(
+        Residente, ResidenteMedicamento, form=ResidenteMedicamentoForm, extra=1, can_delete=True
+    )
+
+    enfermedad_formset = ResidenteEnfermedadFormSet(request.POST or None, instance=None)
+    medicamento_formset = ResidenteMedicamentoFormSet(request.POST or None, instance=None)
 
     if request.method == 'POST':
         if residente_form.is_valid():
             # Guardar el residente
-            residente = residente_form.save()
+            residente = residente_form.save(commit=False)
+            residente.save()
 
-            # Verificar si el residente tiene enfermedades
-            if residente_form.cleaned_data['tiene_enfermedades']:
-                ResidenteEnfermedadFormSet = inlineformset_factory(
-                    Residente, ResidenteEnfermedad, form=ResidenteEnfermedadForm, extra=1, can_delete=True
-                )
-                enfermedad_formset = ResidenteEnfermedadFormSet(request.POST, instance=residente)
+            # Asociar el residente al formset
+            enfermedad_formset = ResidenteEnfermedadFormSet(request.POST, instance=residente)
+            medicamento_formset = ResidenteMedicamentoFormSet(request.POST, instance=residente)
 
-            # Verificar si el residente consume medicamentos
-            if residente_form.cleaned_data['consume_medicamentos']:
-                ResidenteMedicamentoFormSet = inlineformset_factory(
-                    Residente, ResidenteMedicamento, form=ResidenteMedicamentoForm, extra=1, can_delete=True
-                )
-                medicamento_formset = ResidenteMedicamentoFormSet(request.POST, instance=residente)
-
-            # Si los formsets son válidos, guardamos las enfermedades y medicamentos
-            if (enfermedad_formset is None or enfermedad_formset.is_valid()) and (medicamento_formset is None or medicamento_formset.is_valid()):
-                # Guardar las enfermedades relacionadas
-                if enfermedad_formset:
-                    enfermedades = enfermedad_formset.save(commit=False)
-                    for enfermedad in enfermedades:
-                        enfermedad.residente = residente  # Asociar al residente
-                        enfermedad.save()
-                    for enfermedad in enfermedad_formset.deleted_objects:
-                        enfermedad.delete()
-
-                # Guardar los medicamentos relacionados
-                if medicamento_formset:
-                    medicamentos = medicamento_formset.save(commit=False)
-                    for medicamento in medicamentos:
-                        medicamento.residente = residente  # Asociar al residente
-                        medicamento.save()
-                    for medicamento in medicamento_formset.deleted_objects:
-                        medicamento.delete()
+            if enfermedad_formset.is_valid() and medicamento_formset.is_valid():
+                # Guardar enfermedades y medicamentos relacionados
+                enfermedad_formset.save()
+                medicamento_formset.save()
 
                 # Redirigir tras el éxito
-                return redirect('residentes')  # Asegúrate de que esta URL existe
+                return redirect('residentes')  # Cambia 'residentes' a la URL correcta
 
     context = {
         'residente_form': residente_form,

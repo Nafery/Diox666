@@ -23,7 +23,7 @@ class Residente(models.Model):
     genero = models.CharField(max_length=10, choices=GeneroChoices.choices)
     contacto_emergencia = models.CharField(max_length=100)
     telefono_emergencia = models.CharField(max_length=15)
-    habitacion = models.CharField(max_length=10, unique=True)
+    habitacion = models.CharField(max_length=10)
     observaciones = models.TextField(blank=True, null=True)
     imagen = models.ImageField(upload_to='residentes/', blank=True, null=True)
 
@@ -89,7 +89,7 @@ class Enfermedad(models.Model):
         return self.nombre
 
 class ResidenteEnfermedad(models.Model):
-    residente = models.ForeignKey(Residente, on_delete=models.CASCADE)
+    residente = models.ForeignKey(Residente, on_delete=models.CASCADE, related_name='enfermedades')
     enfermedad = models.ForeignKey(Enfermedad, on_delete=models.CASCADE)
     fecha_diagnostico = models.DateField()
     tratamiento = models.TextField(blank=True, null=True)

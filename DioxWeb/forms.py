@@ -2,9 +2,6 @@ from django import forms
 from .models import Residente, ResidenteEnfermedad, ResidenteMedicamento, Enfermedad, Medicamento
 
 class ResidenteForm(forms.ModelForm):
-    tiene_enfermedades = forms.BooleanField(required=False, label="¿Tiene enfermedades?", initial=False)
-    consume_medicamentos = forms.BooleanField(required=False, label="¿Consume medicamentos?", initial=False)
-
     class Meta:
         model = Residente
         fields = ['rut', 'nombre', 'ap_paterno', 'ap_materno', 'fecha_nacimiento', 'genero', 

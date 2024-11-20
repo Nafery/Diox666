@@ -73,23 +73,25 @@
                     {{ residente_form.imagen }}
                 </div>
 
-                <!-- Checkboxes para enfermedades y medicamentos -->
+                <!-- Checkboxes -->
                 <div class="form-group">
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="id_tiene_enfermedades" name="tiene_enfermedades">
+                        <input type="checkbox" class="form-check-input" id="id_tiene_enfermedades" name="tiene_enfermedades" 
+                               {% if residente_form.cleaned_data.tiene_enfermedades %}checked{% endif %}>
                         <label class="form-check-label" for="id_tiene_enfermedades">¿Tiene Enfermedades?</label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="id_consume_medicamentos" name="consume_medicamentos">
+                        <input type="checkbox" class="form-check-input" id="id_consume_medicamentos" name="consume_medicamentos" 
+                               {% if residente_form.cleaned_data.consume_medicamentos %}checked{% endif %}>
                         <label class="form-check-label" for="id_consume_medicamentos">¿Consume Medicamentos?</label>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Formulario de enfermedades, solo se muestra si "tiene_enfermedades" está marcado -->
+        <!-- Formulario de enfermedades -->
         <div class="card mb-4 shadow-sm" id="enfermedad_formset" style="display: none;">
             <div class="card-body">
                 <h4 class="card-title text-warning">Enfermedades</h4>
@@ -122,7 +124,7 @@
             </div>
         </div>
 
-        <!-- Formulario de medicamentos, solo se muestra si "consume_medicamentos" está marcado -->
+        <!-- Formulario de medicamentos -->
         <div class="card mb-4 shadow-sm" id="medicamento_formset" style="display: none;">
             <div class="card-body">
                 <h4 class="card-title text-success">Medicamentos</h4>
