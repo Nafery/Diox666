@@ -1,0 +1,110 @@
+{% extends 'pages/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Título de la página -->
+    <h1 class="text-center mb-4 text-primary">Detalle del Residente</h1>
+
+    <!-- Fila para imagen y datos personales -->
+    <div class="row">
+        <!-- Imagen de perfil a la izquierda -->
+        {% if residente.imagen %}
+            <div class="col-md-3 text-center">
+                <img src="{{ residente.imagen.url }}" alt="Imagen de perfil" class="img-fluid rounded-circle" style="max-width: 200px; height: auto;">
+            </div>
+        {% else %}
+            <div class="col-md-3 text-center">
+                <img src="{% static 'img/default_profile.png' %}" alt="Imagen de perfil" class="img-fluid rounded-circle" style="max-width: 200px; height: auto;">
+            </div>
+        {% endif %}
+
+        <!-- Datos personales a la derecha de la imagen -->
+        <div class="col-md-9">
+            <h3>{{ residente.nombre }} {{ residente.ap_paterno }}</h3>
+            <p><strong>Fecha de Nacimiento:</strong> {{ residente.fecha_nacimiento }}</p>
+            <p><strong>Dirección:</strong> {{ residente.direccion }}</p>
+            <p><strong>Teléfono:</strong> {{ residente.telefono }}</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Pestañas para cambiar entre Enfermedades, Medicamentos y Horarios -->
+    <ul class="nav nav-pills" id="tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="enfermedades-tab" data-bs-toggle="pill" href="#enfermedades" role="tab" aria-controls="enfermedades" aria-selected="true">Enfermedades</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="medicamentos-tab" data-bs-toggle="pill" href="#medicamentos" role="tab" aria-controls="medicamentos" aria-selected="false">Medicamentos</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="horarios-tab" data-bs-toggle="pill" href="#horarios" role="tab" aria-controls="horarios" aria-selected="false">Horarios de Remedios</a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-4" id="pills-tabContent">
+        <!-- Sección Enfermedades -->
+        <div class="tab-pane fade show active" id="enfermedades" role="tabpanel" aria-labelledby="enfermedades-tab">
+            <h4 class="text-danger">Enfermedades</h4>
+            {% if residente.enfermedades.all %}
+                <ul class="list-group">
+                    {% for enfermedad in residente.enfermedades.all %}
+                        <li class="list-group-item">{{ enfermedad.nombre }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No hay enfermedades registradas.</p>
+            {% endif %}
+        </div>
+
+        <!-- Sección Medicamentos -->
+        <div class="tab-pane fade" id="medicamentos" role="tabpanel" aria-labelledby="medicamentos-tab">
+            <h4 class="text-success">Medicamentos</h4>
+            {% if residente.medicamentos.all %}
+                <ul class="list-group">
+                    {% for medicamento in residente.medicamentos.all %}
+                        <li class="list-group-item">
+                            {{ medicamento.nombre }}
+                            <small class="text-muted">- Dosis: {{ medicamento.dosis }} - Frecuencia: {{ medicamento.frecuencia }}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No hay medicamentos registrados.</p>
+            {% endif %}
+        </div>
+
+        <!-- Sección Horarios de Remedios -->
+        <div class="tab-pane fade" id="horarios" role="tabpanel" aria-labelledby="horarios-tab">
+            <h4 class="text-warning">Horarios de Remedios</h4>
+            {% if residente.horarios_remedios.all %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>Medicamento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for horario in residente.horarios_remedios.all %}
+                            <tr>
+                                <td>{{ horario.hora }}</td>
+                                <td>{{ horario.medicamento.nombre }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No hay horarios de remedios registrados.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="{% url 'residentes' %}" class="btn btn-outline-primary">Volver a la lista</a>
+    </div>
+</div>
+{% endblock %}

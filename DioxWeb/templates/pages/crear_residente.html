@@ -1,0 +1,178 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <link rel="stylesheet" href="{% static 'css/style_crearResidente.css' %}">
+
+    <h1 class="text-center mb-4">Crear Residente</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Formulario de datos básicos del residente -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title text-primary">Datos Personales</h4>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_rut">RUT:</label>
+                        {{ residente_form.rut }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_nombre">Nombre:</label>
+                        {{ residente_form.nombre }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_ap_paterno">Apellido Paterno:</label>
+                        {{ residente_form.ap_paterno }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_ap_materno">Apellido Materno:</label>
+                        {{ residente_form.ap_materno }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="id_fecha_nacimiento">Fecha de Nacimiento:</label>
+                        {{ residente_form.fecha_nacimiento }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_genero">Género:</label>
+                        {{ residente_form.genero }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_contacto_emergencia">Contacto de Emergencia:</label>
+                    {{ residente_form.contacto_emergencia }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_telefono_emergencia">Teléfono de Emergencia:</label>
+                    {{ residente_form.telefono_emergencia }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_habitacion">Número de Habitación:</label>
+                    {{ residente_form.habitacion }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_observaciones">Observaciones:</label>
+                    {{ residente_form.observaciones }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_imagen">Imagen:</label>
+                    {{ residente_form.imagen }}
+                </div>
+
+                <!-- Checkboxes para enfermedades y medicamentos -->
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="id_tiene_enfermedades" name="tiene_enfermedades">
+                        <label class="form-check-label" for="id_tiene_enfermedades">¿Tiene Enfermedades?</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="id_consume_medicamentos" name="consume_medicamentos">
+                        <label class="form-check-label" for="id_consume_medicamentos">¿Consume Medicamentos?</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de enfermedades, solo se muestra si "tiene_enfermedades" está marcado -->
+        <div class="card mb-4 shadow-sm" id="enfermedad_formset" style="display: none;">
+            <div class="card-body">
+                <h4 class="card-title text-warning">Enfermedades</h4>
+                {% if enfermedad_formset %}
+                    {{ enfermedad_formset.management_form }}
+                    {% for form in enfermedad_formset %}
+                        <div class="form-row mb-3">
+                            <div class="col-md-4">
+                                <label for="{{ form.enfermedad.id_for_label }}">Enfermedad:</label>
+                                {{ form.enfermedad }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.fecha_diagnostico.id_for_label }}">Fecha de Diagnóstico:</label>
+                                {{ form.fecha_diagnostico }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.tratamiento.id_for_label }}">Tratamiento:</label>
+                                {{ form.tratamiento }}
+                            </div>
+                            <div class="col-md-12 text-right mt-2">
+                                <a href="#" class="btn btn-danger btn-sm remove-form">Eliminar</a>
+                            </div>
+                        </div>
+                        <hr>
+                    {% endfor %}
+                    <button type="button" class="btn btn-secondary mt-3" id="add-enfermedad">Agregar Enfermedad</button>
+                {% else %}
+                    <p>No hay enfermedades registradas.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Formulario de medicamentos, solo se muestra si "consume_medicamentos" está marcado -->
+        <div class="card mb-4 shadow-sm" id="medicamento_formset" style="display: none;">
+            <div class="card-body">
+                <h4 class="card-title text-success">Medicamentos</h4>
+                {% if medicamento_formset %}
+                    {{ medicamento_formset.management_form }}
+                    {% for form in medicamento_formset %}
+                        <div class="form-row mb-3">
+                            <div class="col-md-4">
+                                <label for="{{ form.medicamento.id_for_label }}">Medicamento:</label>
+                                {{ form.medicamento }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.dosis.id_for_label }}">Dosis:</label>
+                                {{ form.dosis }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.fecha_inicio.id_for_label }}">Fecha de Inicio:</label>
+                                {{ form.fecha_inicio }}
+                            </div>
+                            <div class="col-md-12 text-right mt-2">
+                                <a href="#" class="btn btn-danger btn-sm remove-form">Eliminar</a>
+                            </div>
+                        </div>
+                        <hr>
+                    {% endfor %}
+                    <button type="button" class="btn btn-secondary mt-3" id="add-medicamento">Agregar Medicamento</button>
+                {% else %}
+                    <p>No hay medicamentos registrados.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Botón de envío -->
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Crear Residente</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Mostrar u ocultar formularios de enfermedades y medicamentos
+    document.getElementById('id_tiene_enfermedades').addEventListener('change', function() {
+        const enfermedadFormset = document.getElementById('enfermedad_formset');
+        enfermedadFormset.style.display = this.checked ? 'block' : 'none';
+    });
+
+    document.getElementById('id_consume_medicamentos').addEventListener('change', function() {
+        const medicamentoFormset = document.getElementById('medicamento_formset');
+        medicamentoFormset.style.display = this.checked ? 'block' : 'none';
+    });
+</script>
+
+{% endblock %}
