@@ -87,12 +87,19 @@
         <!-- Sección Medicamentos -->
         <div class="tab-pane fade" id="medicamentos" role="tabpanel" aria-labelledby="medicamentos-tab">
             <h4 class="text-success">Medicamentos</h4>
-            {% if residente.medicamentos.all %}
+            {% if medicamentos %}
                 <ul class="list-group">
-                    {% for medicamento in residente.medicamentos.all %}
+                    {% for medicamento in medicamentos %}
                         <li class="list-group-item">
-                            {{ medicamento.nombre }}
-                            <small class="text-muted">- Dosis: {{ medicamento.dosis }} - Frecuencia: {{ medicamento.frecuencia }}</small>
+                            {{ medicamento.medicamento.nombre }}
+                            <small class="text-muted">
+                                - Dosis: {{ medicamento.dosis }} 
+                                - Frecuencia: {{ medicamento.frecuencia }}
+                                - Fecha de inicio: {{ medicamento.fecha_inicio }}
+                                {% if medicamento.fecha_fin %}
+                                    - Fecha de fin: {{ medicamento.fecha_fin }}
+                                {% endif %}
+                            </small>
                         </li>
                     {% endfor %}
                 </ul>

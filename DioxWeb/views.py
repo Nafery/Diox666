@@ -21,9 +21,11 @@ def lista_empleados(request):
 def detalle_residente(request, id):
     residente = get_object_or_404(Residente, id=id)
     enfermedades = ResidenteEnfermedad.objects.filter(residente=residente)
+    medicamentos = ResidenteMedicamento.objects.filter(residente=residente)
     return render(request, 'pages/detalle_residente.html', {
         'residente': residente,
         'enfermedades': enfermedades,
+        'medicamentos': medicamentos,
     })
 
 def detalle_empleado(request, id):

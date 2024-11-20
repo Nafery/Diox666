@@ -80,6 +80,113 @@ class Medicamento(models.Model):
     def __str__(self):
         return self.nombre
 
+class Analgesico(Medicamento):
+    tipo = models.CharField(max_length=100, choices=[('opioide', 'Opioide'), ('no_opioide', 'No Opioide')])
+
+    def __str__(self):
+        return f"Analgesico: {self.nombre}"
+
+class Antidepresivo(Medicamento):
+    clasificacion = models.CharField(max_length=100, choices=[('ISRS', 'Inhibidores selectivos de la recaptación de serotonina'),
+                                                                ('IRSN', 'Inhibidores de la recaptación de serotonina y noradrenalina')])
+
+    def __str__(self):
+        return f"Antidepresivo: {self.nombre}"
+
+class Antiinflamatorio(Medicamento):
+    tipo = models.CharField(max_length=100, choices=[('esteroide', 'Esteroide'), ('no_esteroide', 'No Esteroide')])
+
+    def __str__(self):
+        return f"Antiinflamatorio: {self.nombre}"
+
+class Antibiotico(Medicamento):
+    clase = models.CharField(max_length=100, choices=[('penicilina', 'Penicilina'), 
+                                                      ('cefalosporina', 'Cefalosporina'),
+                                                      ('macrolidos', 'Macrólidos'),
+                                                      ('quinolonas', 'Quinolonas')])
+    
+    def __str__(self):
+        return f"Antibiótico: {self.nombre}"
+
+class Antihipertensivo(Medicamento):
+    clase = models.CharField(max_length=100, choices=[('IECA', 'Inhibidores de la Enzima Convertidora de Angiotensina'), 
+                                                      ('ARA', 'Antagonistas de los Receptores de Angiotensina'),
+                                                      ('diuretico', 'Diurético'),
+                                                      ('beta_bloqueante', 'Beta-bloqueante')])
+    # Otros campos específicos pueden ser agregados si es necesario
+    
+    def __str__(self):
+        return f"Antihipertensivo: {self.nombre}"
+
+class Antialergico(Medicamento):
+    tipo = models.CharField(max_length=100, choices=[('antihistaminico', 'Antihistamínico'),
+                                                     ('corticosteroide', 'Corticosteroide'),
+                                                     ('leucotrieno', 'Antagonista de Leucotrienos')])
+    # Otros campos específicos pueden ser agregados si es necesario
+    
+    def __str__(self):
+        return f"Antialérgico: {self.nombre}"
+
+class Ansiolitico(Medicamento):
+    clasificacion = models.CharField(max_length=100, choices=[('benzodiazepinas', 'Benzodiazepinas'),
+                                                              ('no_benzodiazepinas', 'No Benzodiazepinas')])
+    # Otros campos específicos pueden ser agregados si es necesario
+    
+    def __str__(self):
+        return f"Ansiolítico: {self.nombre}"
+
+class Antidiabetico(Medicamento):
+    tipo = models.CharField(max_length=100, choices=[('insulina', 'Insulina'),
+                                                     ('biguanidas', 'Biguanidas'),
+                                                     ('sulfonilureas', 'Sulfonilureas')])
+    # Otros campos específicos pueden ser agregados si es necesario
+    
+    def __str__(self):
+        return f"Antidiabético: {self.nombre}"
+
+class Estimulante(Medicamento):
+    clasificacion = models.CharField(max_length=100, choices=[('anfetamina', 'Anfetamina'),
+                                                              ('metilfenidato', 'Metilfenidato')])
+    # Otros campos específicos pueden ser agregados si es necesario
+    
+    def __str__(self):
+        return f"Estimulante: {self.nombre}"
+
+class Antipsicotico(Medicamento):
+    tipo = models.CharField(max_length=100, choices=[('atipico', 'Atípico'),
+                                                     ('tipico', 'Típico')])
+    # Otros campos específicos pueden ser agregados si es necesario
+    
+    def __str__(self):
+        return f"Antipsicótico: {self.nombre}"
+
+class Laxante(Medicamento):
+    tipo = models.CharField(max_length=100, choices=[('irritante', 'Irritante'),
+                                                     ('formador_de_masa', 'Formador de Masa'),
+                                                     ('lubricante', 'Lubricante')])
+    # Otros campos específicos pueden ser agregados si es necesario
+    
+    def __str__(self):
+        return f"Laxante: {self.nombre}"
+
+class Vacuna(Medicamento):
+    enfermedad_previene = models.CharField(max_length=100)
+    # Otros campos específicos pueden ser agregados si es necesario
+    
+    def __str__(self):
+        return f"Vacuna: {self.nombre}"
+
+class Anticonceptivo(Medicamento):
+    tipo = models.CharField(max_length=100, choices=[('oral', 'Oral'),
+                                                     ('inyectable', 'Inyectable'),
+                                                     ('implante', 'Implante'),
+                                                     ('condon', 'Condón')])
+    # Otros campos específicos pueden ser agregados si es necesario
+    
+    def __str__(self):
+        return f"Anticonceptivo: {self.nombre}"
+
+
 class Enfermedad(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     descripcion = models.TextField(blank=True, null=True)
