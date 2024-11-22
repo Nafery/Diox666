@@ -30,6 +30,73 @@
             <p><strong>Contacto de Emergencia:</strong> {{ residente.contacto_emergencia }}</p>
             <p><strong>Teléfono de Emergencia:</strong> {{ residente.telefono_emergencia }}</p>
         </div>
+
+        <!-- Botón para editar datos del residente -->
+        <div class="mt-4 text-center">
+            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editarResidenteModal">Editar Datos</button>
+        </div>
+
+        <!-- Modal para editar los datos del residente -->
+        <div class="modal fade" id="editarResidenteModal" tabindex="-1" aria-labelledby="editarResidenteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editarResidenteModalLabel">Editar Residente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{% url 'detalle_residente' residente.id %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="nombre">Nombre:</label>
+                                <input type="text" name="nombre" id="nombre" class="form-control" value="{{ residente.nombre }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ap_paterno">Apellido Paterno:</label>
+                                <input type="text" name="ap_paterno" id="ap_paterno" class="form-control" value="{{ residente.ap_paterno }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ap_materno">Apellido Materno:</label>
+                                <input type="text" name="ap_materno" id="ap_materno" class="form-control" value="{{ residente.ap_materno }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="rut">RUT:</label>
+                                <input type="text" name="rut" id="rut" class="form-control" value="{{ residente.rut }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+                                <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="form-control" value="{{ residente.fecha_nacimiento }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="genero">Género:</label>
+                                <select name="genero" id="genero" class="form-control" required>
+                                    <option value="Masculino" {% if residente.genero == "Masculino" %}selected{% endif %}>Masculino</option>
+                                    <option value="Femenino" {% if residente.genero == "Femenino" %}selected{% endif %}>Femenino</option>
+                                    <option value="Otro" {% if residente.genero == "Otro" %}selected{% endif %}>Otro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="habitacion">Habitación:</label>
+                                <input type="text" name="habitacion" id="habitacion" class="form-control" value="{{ residente.habitacion }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contacto_emergencia">Contacto de Emergencia:</label>
+                                <input type="text" name="contacto_emergencia" id="contacto_emergencia" class="form-control" value="{{ residente.contacto_emergencia }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="telefono_emergencia">Teléfono de Emergencia:</label>
+                                <input type="text" name="telefono_emergencia" id="telefono_emergencia" class="form-control" value="{{ residente.telefono_emergencia }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="imagen">Imagen de Perfil:</label>
+                                <input type="file" name="imagen" id="imagen" class="form-control-file">
+                            </div>
+                            <button type="submit" name="editar_residente" class="btn btn-primary mt-3">Actualizar Datos</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <hr>
@@ -46,98 +113,241 @@
 
     <hr>
 
-    <!-- Pestañas para información adicional -->
-    <ul class="nav nav-pills" id="tabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <a class="nav-link active" id="enfermedades-tab" data-bs-toggle="pill" href="#enfermedades" role="tab" aria-controls="enfermedades" aria-selected="true">Enfermedades</a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link" id="medicamentos-tab" data-bs-toggle="pill" href="#medicamentos" role="tab" aria-controls="medicamentos" aria-selected="false">Medicamentos</a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link" id="horarios-tab" data-bs-toggle="pill" href="#horarios" role="tab" aria-controls="horarios" aria-selected="false">Horarios de Remedios</a>
-        </li>
-    </ul>
-
-    <div class="tab-content mt-4" id="pills-tabContent">
-        <!-- Sección Enfermedades -->
-        <div class="tab-pane fade show active" id="enfermedades" role="tabpanel" aria-labelledby="enfermedades-tab">
-            <h4 class="text-danger">Enfermedades</h4>
-            {% if enfermedades %}
-                <ul class="list-group">
-                    {% for relacion in enfermedades %}
-                        <li class="list-group-item">
-                            <strong>{{ relacion.enfermedad.nombre }}</strong><br>
-                            <small>
-                                <strong>Fecha de Diagnóstico:</strong> {{ relacion.fecha_diagnostico }}<br>
-                                {% if relacion.tratamiento %}
-                                    <strong>Tratamiento:</strong> {{ relacion.tratamiento }}
-                                {% else %}
-                                    <em>Sin tratamiento registrado</em>
-                                {% endif %}
-                            </small>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No hay enfermedades registradas.</p>
-            {% endif %}
-        </div>
-
-        <!-- Sección Medicamentos -->
-        <div class="tab-pane fade" id="medicamentos" role="tabpanel" aria-labelledby="medicamentos-tab">
-            <h4 class="text-success">Medicamentos</h4>
-            {% if medicamentos %}
-                <ul class="list-group">
-                    {% for medicamento in medicamentos %}
-                        <li class="list-group-item">
-                            {{ medicamento.medicamento.nombre }}
-                            <small class="text-muted">
-                                - Dosis: {{ medicamento.dosis }} 
-                                - Frecuencia: {{ medicamento.frecuencia }}
-                                - Fecha de inicio: {{ medicamento.fecha_inicio }}
-                                {% if medicamento.fecha_fin %}
-                                    - Fecha de fin: {{ medicamento.fecha_fin }}
-                                {% endif %}
-                            </small>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No hay medicamentos registrados.</p>
-            {% endif %}
-        </div>
-
-        <!-- Sección Horarios de Remedios -->
-        <div class="tab-pane fade" id="horarios" role="tabpanel" aria-labelledby="horarios-tab">
-            <h4 class="text-warning">Horarios de Remedios</h4>
-            {% if residente.horarios_remedios.all %}
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Hora</th>
-                            <th>Medicamento</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for horario in residente.horarios_remedios.all %}
-                            <tr>
-                                <td>{{ horario.hora }}</td>
-                                <td>{{ horario.medicamento.nombre }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>No hay horarios de remedios registrados.</p>
-            {% endif %}
-        </div>
+    <!-- Botones para alternar secciones -->
+    <div class="btn-group mt-4" role="group" aria-label="Secciones">
+        <button type="button" class="btn btn-outline-danger" onclick="mostrarSeccion('enfermedades')">Enfermedades</button>
+        <button type="button" class="btn btn-outline-success" onclick="mostrarSeccion('medicamentos')">Medicamentos</button>
+        <button type="button" class="btn btn-outline-warning" onclick="mostrarSeccion('horarios')">Horarios de Remedios</button>
+        <button type="button" class="btn btn-outline-info" onclick="mostrarSeccion('incidencias')">Incidencias</button> <!-- Nuevo botón -->
     </div>
 
+    <!-- Sección Enfermedades -->
+    <div id="enfermedades" class="mt-4" style="display: none;">
+        <h4 class="text-danger">Enfermedades</h4>
+        {% if enfermedades %}
+            <ul class="list-group">
+                {% for relacion in enfermedades %}
+                    <li class="list-group-item">
+                        <strong>{{ relacion.enfermedad.nombre }}</strong><br>
+                        <small>
+                            <strong>Fecha de Diagnóstico:</strong> {{ relacion.fecha_diagnostico }}<br>
+                            {% if relacion.tratamiento %}
+                                <strong>Tratamiento:</strong> {{ relacion.tratamiento }}
+                            {% else %}
+                                <em>Sin tratamiento registrado</em>
+                            {% endif %}
+                        </small>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay enfermedades registradas.</p>
+        {% endif %}
+
+        {% if enfermedades_disponibles %}
+            <h4 class="mt-4">Agregar Enfermedad</h4>
+            <form method="POST" action="{% url 'detalle_residente' residente.id %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="enfermedad">Enfermedad:</label>
+                    <select name="enfermedad" id="enfermedad" class="form-control" required>
+                        {% for enfermedad in enfermedades_disponibles %}
+                            <option value="{{ enfermedad.id }}">{{ enfermedad.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_diagnostico">Fecha de Diagnóstico:</label>
+                    <input type="date" name="fecha_diagnostico" id="fecha_diagnostico" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="tratamiento">Tratamiento:</label>
+                    <textarea name="tratamiento" id="tratamiento" class="form-control"></textarea>
+                </div>
+                <button type="submit" name="agregar_enfermedad" class="btn btn-primary mt-3">Agregar Enfermedad</button>
+            </form>
+        {% else %}
+            <p class="text-muted mt-3"><em>No hay enfermedades disponibles para asignar.</em></p>
+        {% endif %}
+    </div>
+
+    <!-- Sección Medicamentos -->
+    <div id="medicamentos" class="mt-4" style="display: none;">
+        <h4 class="text-success">Medicamentos</h4>
+        {% if medicamentos %}
+            <ul class="list-group">
+                {% for medicamento in medicamentos %}
+                    <li class="list-group-item">
+                        <strong>{{ medicamento.medicamento.nombre }}</strong>
+                        <small class="text-muted">
+                            - Dosis: {{ medicamento.dosis }} 
+                            - Frecuencia: {{ medicamento.frecuencia }}
+                            - Fecha de inicio: {{ medicamento.fecha_inicio }}
+                            {% if medicamento.fecha_fin %}
+                                - Fecha de fin: {{ medicamento.fecha_fin }}
+                            {% endif %}
+                        </small>
+                        <!-- Botón de edición -->
+                        <button class="btn btn-sm btn-warning float-end ms-2" data-bs-toggle="modal" data-bs-target="#editMedicamentoModal{{ medicamento.id }}">Editar</button>
+                    </li>
+
+                    <!-- Modal para editar medicamento -->
+                    <div class="modal fade" id="editMedicamentoModal{{ medicamento.id }}" tabindex="-1" aria-labelledby="editMedicamentoModalLabel{{ medicamento.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editMedicamentoModalLabel{{ medicamento.id }}">Editar Medicamento</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="POST" action="{% url 'detalle_residente' residente.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="medicamento_id" value="{{ medicamento.id }}">
+                                        
+                                        <!-- Mostrar el nombre del medicamento en un campo solo lectura -->
+                                        <div class="form-group">
+                                            <label for="medicamento">Medicamento:</label>
+                                            <input type="text" class="form-control" value="{{ medicamento.medicamento.nombre }}" readonly>
+                                        </div>
+
+                                        <!-- Otros campos para la edición del medicamento -->
+                                        <div class="form-group">
+                                            <label for="dosis">Dosis:</label>
+                                            <input type="text" name="dosis" id="dosis" class="form-control" value="{{ medicamento.dosis }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="frecuencia">Frecuencia:</label>
+                                            <input type="text" name="frecuencia" id="frecuencia" class="form-control" value="{{ medicamento.frecuencia }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fecha_inicio">Fecha de Inicio:</label>
+                                            <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control" value="{{ medicamento.fecha_inicio }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fecha_fin">Fecha de Fin (opcional):</label>
+                                            <input type="date" name="fecha_fin" id="fecha_fin" class="form-control" value="{{ medicamento.fecha_fin }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="observaciones">Observaciones:</label>
+                                            <textarea name="observaciones" id="observaciones" class="form-control">{{ medicamento.observaciones }}</textarea>
+                                        </div>
+                                        <button type="submit" name="editar_medicamento" class="btn btn-primary mt-3">Actualizar Medicamento</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay medicamentos registrados.</p>
+        {% endif %}
+
+        <!-- Mostrar formulario solo si hay medicamentos disponibles -->
+        {% if medicamentos_disponibles %}
+            <h4 class="mt-4">Agregar Medicamento</h4>
+            <form method="POST" action="{% url 'detalle_residente' residente.id %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="medicamento">Medicamento:</label>
+                    <select name="medicamento" id="medicamento" class="form-control" required>
+                        {% for medicamento in medicamentos_disponibles %}
+                            <option value="{{ medicamento.id }}">{{ medicamento.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dosis">Dosis:</label>
+                    <input type="text" name="dosis" id="dosis" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="frecuencia">Frecuencia:</label>
+                    <input type="text" name="frecuencia" id="frecuencia" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_inicio">Fecha de Inicio:</label>
+                    <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_fin">Fecha de Fin:</label>
+                    <input type="date" name="fecha_fin" id="fecha_fin" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="observaciones">Observaciones:</label>
+                    <textarea name="observaciones" id="observaciones" class="form-control"></textarea>
+                </div>
+                <button type="submit" name="agregar_medicamento" class="btn btn-success mt-3">Agregar Medicamento</button>
+            </form>
+        {% else %}
+            <p class="text-muted mt-3"><em>No hay medicamentos disponibles para asignar.</em></p>
+        {% endif %}
+    </div>
+
+    <!-- Sección Horarios de Remedios -->
+    <div id="horarios" class="mt-4" style="display: none;">
+        <h4 class="text-warning">Horarios de Remedios</h4>
+        <ul class="list-group">
+            <li class="list-group-item">08:00 AM - Medicamento 1</li>
+            <li class="list-group-item">02:00 PM - Medicamento 2</li>
+            <li class="list-group-item">06:00 PM - Medicamento 3</li>
+        </ul>
+    </div>
+
+    <!-- Sección Incidencias -->
+    <div id="incidencias" class="mt-4" style="display: none;">
+        <h4 class="text-info">Incidencias</h4>
+        {% if incidencias %}
+            <ul class="list-group">
+                {% for incidencia in incidencias %}
+                    <li class="list-group-item">
+                        <strong>Descripción:</strong> {{ incidencia.descripcion }}<br>
+                        <small>
+                            <strong>Fecha de Creación:</strong> {{ incidencia.fecha_creacion }}<br>
+                            <strong>Estado:</strong> {% if incidencia.resuelto %} Resuelta {% else %} Pendiente {% endif %}
+                        </small>
+                        <!-- Botón para marcar la incidencia como resuelta -->
+                        {% if not incidencia.resuelto %}
+                            <form method="POST" action="{% url 'detalle_residente' residente.id %}" class="float-end">
+                                {% csrf_token %}
+                                <input type="hidden" name="incidencia_id" value="{{ incidencia.id }}">
+                                <button type="submit" name="marcar_resuelto" class="btn btn-sm btn-success mt-2">Marcar como Resuelta</button>
+                            </form>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay incidencias registradas.</p>
+        {% endif %}
+        
+        <h4 class="mt-4">Agregar Incidencia</h4>
+        <form method="POST" action="{% url 'detalle_residente' residente.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea name="descripcion" id="descripcion" class="form-control" required></textarea>
+            </div>
+            <button type="submit" name="agregar_incidencia" class="btn btn-info mt-3">Agregar Incidencia</button>
+        </form>
+    </div>
     <!-- Botón de regreso -->
     <div class="mt-4 text-center">
         <a href="{% url 'residentes' %}" class="btn btn-outline-primary">Volver a la lista</a>
     </div>
 </div>
-{% endblock %}
 
+<script>
+    function mostrarSeccion(seccion) {
+        // Ocultar todas las secciones
+        var secciones = ['enfermedades', 'medicamentos', 'horarios', 'incidencias'];
+        secciones.forEach(function(s) {
+            document.getElementById(s).style.display = 'none';
+        });
+
+        // Mostrar la sección seleccionada
+        document.getElementById(seccion).style.display = 'block';
+    }
+</script>
+
+{% endblock %}
