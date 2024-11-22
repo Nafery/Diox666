@@ -39,7 +39,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="">Incidencias</a>
                     </li>
-                    <!-- Aquí puedes agregar más enlaces según las vistas que tengas -->
                 </ul>
             </div>
         </div>
@@ -47,6 +46,18 @@
 
     <!-- Contenido principal de la página -->
     <div class="container my-5">
+        <!-- Espacio para mensajes de Django -->
+        {% if messages %}
+            <div>
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% block content %}{% endblock %}
     </div>
 
@@ -62,3 +73,4 @@
     {% block extra_js %}{% endblock %}
 </body>
 </html>
+

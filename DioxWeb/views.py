@@ -1,6 +1,7 @@
 from django.forms import inlineformset_factory
 from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
+from django.contrib import messages
 from .models import Residente, Empleado, ResidenteEnfermedad, ResidenteMedicamento, Enfermedad, Medicamento, Incidencia
 from .forms import ResidenteForm, ResidenteEnfermedadForm, ResidenteMedicamentoForm
 
@@ -13,6 +14,26 @@ def index(request):
 def lista_residentes(request):
     residentes = Residente.objects.all()
     return render(request, 'pages/lista_residentes.html', {'residentes': residentes})
+
+def eliminar_residente(request, pk):
+    # Verificar que la solicitud sea POST
+    if request.method == "POST":
+        try:
+            # Obtener el residente o lanzar 404 si no existe
+            residente = get_object_or_404(Residente, pk=pk)
+            # Eliminar el residente
+            residente.delete()
+            # Mostrar mensaje de éxito
+            messages.success(request, f"Residente {residente.nombre} {residente.ap_paterno} eliminado con éxito.")
+        except Exception as e:
+            # Manejar posibles errores de eliminación
+            messages.error(request, f"Hubo un error al intentar eliminar el residente: {e}")
+    else:
+        # Redirigir si el método no es POST
+        messages.warning(request, "Acción no permitida. Solo se permiten solicitudes POST para eliminar residentes.")
+    
+    # Redirigir a la lista de residentes
+    return redirect('residentes')
 
 def lista_empleados(request):
     empleados = Empleado.objects.all()
@@ -161,3 +182,7 @@ def crear_residente(request):
         'medicamento_formset': medicamento_formset,
     }
     return render(request, 'pages/crear_residente.html', context)
+
+def lista_enfermedades(request):
+    enfermedades = Enfermedad.objects.all()
+    return render(request, 'pages/lista_enfermedades.html', {'enfermedades': enfermedades})

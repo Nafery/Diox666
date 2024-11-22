@@ -12,10 +12,19 @@
     <ul class="list-group">
         {% for residente in residentes %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{% url 'detalle_residente' residente.id %}" class="text-decoration-none">
-                    {{ residente.nombre }} {{ residente.ap_paterno }}
-                </a>
-                <a href="{% url 'detalle_residente' residente.id %}" class="btn btn-info btn-sm">Ver detalles</a>
+                <div>
+                    <a href="{% url 'detalle_residente' residente.id %}" class="text-decoration-none">
+                        {{ residente.nombre }} {{ residente.ap_paterno }}
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'detalle_residente' residente.id %}" class="btn btn-info btn-sm">Ver detalles</a>
+                    <!-- Botón de eliminación -->
+                    <form method="POST" action="{% url 'eliminar_residente' residente.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </div>
             </li>
         {% endfor %}
     </ul>
@@ -25,3 +34,4 @@
     </div>
 </div>
 {% endblock %}
+

@@ -1,0 +1,34 @@
+{% extends 'pages/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Lista de Enfermedades</h1>
+
+    <!-- Botón para redirigir a la creación de nuevas enfermedades (opcional) -->
+    <div class="text-center mb-4">
+        <a href="" class="btn btn-success">Agregar Nueva Enfermedad</a>
+    </div>
+
+    <!-- Lista de enfermedades -->
+    <ul class="list-group">
+        {% for enfermedad in enfermedades %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                    <strong>{{ enfermedad.nombre }}</strong> 
+                    {% if enfermedad.cronica %}
+                        <span class="badge bg-danger">Crónica</span>
+                    {% endif %}
+                    <br>
+                    {{ enfermedad.descripcion|default:"Sin descripción" }}
+                </span>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-center">No hay enfermedades registradas.</li>
+        {% endfor %}
+    </ul>
+
+    <div class="mt-4 text-center">
+        <a href="{% url 'index' %}" class="btn btn-secondary">Volver al inicio</a>
+    </div>
+</div>
+{% endblock %}
