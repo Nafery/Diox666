@@ -1,20 +1,28 @@
 from django.forms import inlineformset_factory
 from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import Residente, Empleado, ResidenteEnfermedad, ResidenteMedicamento, Enfermedad, Medicamento, Incidencia
-from .forms import ResidenteForm, ResidenteEnfermedadForm, ResidenteMedicamentoForm
+from .forms import ResidenteForm, ResidenteEnfermedadForm, ResidenteMedicamentoForm, EmpleadoLoginForm, EmpleadoRegistroForm
+from django.contrib.auth.decorators import login_required
+from .decorators import role_required
 
 # Create your views here.
 
+@login_required
 def index(request):
     context = {}
     return render(request, 'pages/index.html', context)
 
+@role_required(roles=["Cuidador", "Medico", "Enfermero", "Administrador"])
+@login_required
 def lista_residentes(request):
     residentes = Residente.objects.all()
     return render(request, 'pages/lista_residentes.html', {'residentes': residentes})
 
+@role_required(roles=["Administrador"])
+@login_required
 def eliminar_residente(request, pk):
     # Verificar que la solicitud sea POST
     if request.method == "POST":
@@ -35,10 +43,14 @@ def eliminar_residente(request, pk):
     # Redirigir a la lista de residentes
     return redirect('residentes')
 
+@role_required(roles=["Administrador"])
+@login_required
 def lista_empleados(request):
     empleados = Empleado.objects.all()
     return render(request, 'pages/lista_empleados.html', {'empleados': empleados})
 
+@role_required(roles=["Administrador", "Cuidador", "Medico", "Enfermero"])
+@login_required
 def detalle_residente(request, id):
     # Obtener el residente
     residente = get_object_or_404(Residente, id=id)
@@ -138,11 +150,14 @@ def detalle_residente(request, id):
     })
 
 
-
+@role_required(roles=["Administrador"])
+@login_required
 def detalle_empleado(request, id):
     empleado = get_object_or_404(Empleado, id=id)
     return render(request, 'pages/detalle_empleado.html', {'empleado': empleado})
 
+@role_required(roles=["Administrador"])
+@login_required
 def crear_residente(request):
     # Formulario principal para Residente
     residente_form = ResidenteForm(request.POST or None, request.FILES or None)
@@ -174,7 +189,7 @@ def crear_residente(request):
                 medicamento_formset.save()
 
                 # Redirigir tras el éxito
-                return redirect('residentes')  # Cambia 'residentes' a la URL correcta
+                return redirect('residentes')
 
     context = {
         'residente_form': residente_form,
@@ -183,6 +198,42 @@ def crear_residente(request):
     }
     return render(request, 'pages/crear_residente.html', context)
 
+@role_required(roles=["Administrador"])
+@login_required
 def lista_enfermedades(request):
     enfermedades = Enfermedad.objects.all()
     return render(request, 'pages/lista_enfermedades.html', {'enfermedades': enfermedades})
+
+
+def login_empleado(request):
+    if request.method == 'POST':
+        form = EmpleadoLoginForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('index')
+    else:
+        form = EmpleadoLoginForm()
+    return render(request, 'pages/login_empleado.html', {'form': form})
+
+@role_required(roles=["Administrador"])
+@login_required
+def registrar_empleado(request):
+    if request.method == "POST":
+        form = EmpleadoRegistroForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Crear el usuario
+            user = User.objects.create_user(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password']
+            )
+            # Crear el empleado asociado al usuario
+            empleado = form.save(commit=False)
+            empleado.user = user
+            empleado.save()
+
+            messages.success(request, "Empleado registrado exitosamente.")
+    else:
+        form = EmpleadoRegistroForm()
+    
+    return render(request, 'pages/registro_empleado.html', {'form': form})

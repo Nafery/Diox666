@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 import re
 from django.utils import timezone
 
@@ -38,6 +39,7 @@ class Rol(models.Model):
         return self.nombre
 
 class Empleado(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default = 1)
     rut = models.CharField(max_length=12, unique=True, validators=[validar_rut])
     nombre = models.CharField(max_length=100)
     ap_paterno = models.CharField(max_length=100)
