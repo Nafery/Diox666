@@ -7,6 +7,8 @@ from .models import Residente, Empleado, ResidenteEnfermedad, ResidenteMedicamen
 from .forms import ResidenteForm, ResidenteEnfermedadForm, ResidenteMedicamentoForm, EmpleadoLoginForm, EmpleadoRegistroForm
 from django.contrib.auth.decorators import login_required
 from .decorators import role_required
+from django.http import HttpResponse
+import csv
 
 # Create your views here.
 
@@ -237,3 +239,59 @@ def registrar_empleado(request):
         form = EmpleadoRegistroForm()
     
     return render(request, 'pages/registro_empleado.html', {'form': form})
+
+def generar_informe_medicamentos(request):
+    # Obtener todos los medicamentos administrados con relaciones precargadas
+    medicamentos = ResidenteMedicamento.objects.select_related('residente', 'medicamento')
+
+    # Si deseas implementar filtros, por ejemplo, por residente o fechas:
+    # Puedes obtener parámetros del request si es necesario (opcional)
+    nombre_residente = request.GET.get('nombre', None)
+    fecha_inicio = request.GET.get('fecha_inicio', None)
+    fecha_fin = request.GET.get('fecha_fin', None)
+
+    # Aplicar filtros opcionales si se proporcionan
+    if nombre_residente:
+        medicamentos = medicamentos.filter(residente__nombre__icontains=nombre_residente)
+
+    if fecha_inicio and fecha_fin:
+        medicamentos = medicamentos.filter(
+            fecha_inicio__gte=fecha_inicio,
+            fecha_fin__lte=fecha_fin
+        )
+
+    # Contexto para enviar a la plantilla
+    context = {
+        'medicamentos': medicamentos,
+        'nombre_residente': nombre_residente,
+        'fecha_inicio': fecha_inicio,
+        'fecha_fin': fecha_fin,
+    }
+
+    return render(request, 'informes/medicamentos.html', context)
+
+def exportar_informe_medicamentos_csv(request):
+    # Obtener todos los medicamentos administrados
+    medicamentos = ResidenteMedicamento.objects.all().select_related('residente', 'medicamento')
+
+    # Crear la respuesta HTTP para un archivo CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="informe_medicamentos.csv"'
+
+    # Crear el escritor CSV
+    writer = csv.writer(response)
+    writer.writerow(['Residente', 'Medicamento', 'Dosis', 'Frecuencia', 'Fecha Inicio', 'Fecha Fin', 'Observaciones'])
+
+    # Escribir los datos de medicamentos en el CSV
+    for med in medicamentos:
+        writer.writerow([
+            f"{med.residente.nombre} {med.residente.ap_paterno}",
+            med.medicamento.nombre,
+            med.dosis,
+            med.frecuencia,
+            med.fecha_inicio,
+            med.fecha_fin,
+            med.observaciones or ''
+        ])
+
+    return response

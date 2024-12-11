@@ -15,4 +15,6 @@ urlpatterns = [
     path('login/', views.login_empleado, name='login_empleado'),
     path('registro/', views.registrar_empleado, name='registro_empleado'),
     path('logout/', LogoutView.as_view(next_page='login_empleado'), name='logout'),
+    path('informes/medicamentos/', views.generar_informe_medicamentos, name='generar_informe_medicamentos'),
+    path('informes/medicamentos/csv/', views.exportar_informe_medicamentos_csv, name='exportar_informe_medicamentos_csv'),
 ]

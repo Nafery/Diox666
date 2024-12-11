@@ -128,3 +128,4 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'DioxWeb/static/media')
 
 LOGOUT_REDIRECT_URL = 'login_empleado'
+LOGIN_URL = 'login_empleado'

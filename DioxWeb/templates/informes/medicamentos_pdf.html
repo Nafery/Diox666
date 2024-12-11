@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Medicamentos Administrados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Informe de Medicamentos Administrados</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Residente</th>
+                <th>Medicamento</th>
+                <th>Dosis</th>
+                <th>Frecuencia</th>
+                <th>Fecha de Inicio</th>
+                <th>Fecha de Fin</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registro in medicamentos %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ registro.residente }}</td>
+                <td>{{ registro.medicamento }}</td>
+                <td>{{ registro.dosis }}</td>
+                <td>{{ registro.frecuencia }}</td>
+                <td>{{ registro.fecha_inicio }}</td>
+                <td>{{ registro.fecha_fin|default:'N/A' }}</td>
+                <td>{{ registro.observaciones|default:'N/A' }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center">No hay medicamentos registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
