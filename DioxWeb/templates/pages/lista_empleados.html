@@ -1,20 +1,36 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Lista de Empleados</title>
-</head>
-<body>
-    <h1>Lista de Empleados</h1>
-    <ul>
+{% extends 'pages/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Lista de Empleados</h1>
+
+    <!-- Botón para redirigir a la creación de nuevos empleados -->
+    <div class="text-center mb-4">
+        <a href="" class="btn btn-success">Crear Nuevo Empleado</a>
+    </div>
+
+    <ul class="list-group">
         {% for empleado in empleados %}
-            <li>
-                <a href="{% url 'detalle_empleado' empleado.id %}">
-                    {{ empleado.nombre }} {{ empleado.ap_paterno }}
-                </a>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="{% url 'detalle_empleado' empleado.id %}" class="text-decoration-none">
+                        {{ empleado.nombre }} {{ empleado.ap_paterno }}
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'detalle_empleado' empleado.id %}" class="btn btn-info btn-sm">Ver detalles</a>
+                    <!-- Botón de eliminación -->
+                    <form method="POST" action="" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </div>
             </li>
         {% endfor %}
     </ul>
-    <a href="{% url 'index' %}">Volver al inicio</a>
-</body>
-</html>
+
+    <div class="mt-4 text-center">
+        <a href="{% url 'index' %}" class="btn btn-secondary">Volver al inicio</a>
+    </div>
+</div>
+{% endblock %}

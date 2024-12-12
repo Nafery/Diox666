@@ -1,14 +1,18 @@
-/* Estilo general para el cuerpo de la página */
-body {
+/* Asegurar que el cuerpo ocupa toda la altura de la ventana */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* Ocupar toda la altura */
+    display: flex;
+    flex-direction: column;
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa;
     color: #333;
-    margin: 0;
-    padding: 0;
 }
 
-/* Estilo para el contenedor principal */
+/* Asegurar que el contenedor principal crece dinámicamente */
 .container {
+    flex-grow: 1; /* Hace que el contenido principal ocupe el espacio sobrante */
     padding: 20px;
 }
 
@@ -124,11 +128,12 @@ h1 {
     margin-bottom: 30px;
 }
 
-/* Espaciado para la sección de pie de página */
+/* Pie de página */
 footer {
+    margin-top: auto; /* Asegura que el footer esté al final */
     background-color: #343a40;
     color: #fff;
-    padding: 15px;
     text-align: center;
+    padding: 15px;
     margin-top: 50px;
 }
